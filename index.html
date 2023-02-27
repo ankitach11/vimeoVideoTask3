@@ -12,6 +12,7 @@
 		// Initialize the Vimeo player
 		var player = new Vimeo.Player('vimeo-player');
 		var duration;
+		var isPlaying = false;
 
 		// Get the duration of the video and handle errors
 		player.getDuration().then(function(d) {
@@ -25,12 +26,28 @@
 			console.log('Error:', error);
 		});
 
+		// Handle player play and pause events
+		player.on('play', function() {
+			isPlaying = true;
+			console.log('Video started playing');
+		});
+
+		player.on('pause', function() {
+			isPlaying = false;
+			console.log('Video paused');
+		});
+
 		// Track the progress of the video every 5 seconds
 		var progressInterval = setInterval(function() {
 			player.getCurrentTime().then(function(seconds) {
 				if (!isNaN(duration)) {
 					console.log('Progress:', seconds, 'seconds');
 					console.log('Completion:', (seconds / duration) * 100, '%');
+					if (isPlaying) {
+						console.log('Video is currently playing');
+					} else {
+						console.log('Video is currently paused');
+					}
 				}
 			}).catch(function(error) {
 				console.log('Error:', error);
