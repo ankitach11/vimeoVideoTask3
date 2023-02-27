@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Vimeo Video Progress Tracker</title>
+	<link rel="shortcut icon" href="https://example.com/favicon.ico" type="image/x-icon">
+</head>
+<body>
+	<iframe id="vimeo-player" src="https://player.vimeo.com/video/802465632?autoplay=1" width="640" height="360" frameborder="0" allow="autoplay; fullscreen; picture-in-picture"></iframe>
+
+	<script src="https://player.vimeo.com/api/player.js"></script>
+	<script>
+		// Initialize the Vimeo player
+		var player = new Vimeo.Player('vimeo-player');
+		var duration;
+
+		// Get the duration of the video and handle errors
+		player.getDuration().then(function(d) {
+			if (!isNaN(d)) {
+				duration = d;
+				console.log('Duration:', duration, 'seconds');
+			} else {
+				console.log('Error: Unable to get video duration.');
+			}
+		}).catch(function(error) {
+			console.log('Error:', error);
+		});
+
+		// Track the progress of the video every 5 seconds
+		var progressInterval = setInterval(function() {
+			player.getCurrentTime().then(function(seconds) {
+				if (!isNaN(duration)) {
+					console.log('Progress:', seconds, 'seconds');
+					console.log('Completion:', (seconds / duration) * 100, '%');
+				}
+			}).catch(function(error) {
+				console.log('Error:', error);
+			});
+		}, 5000);
+
+		// Handle user seeking
+		player.on('seeked', function(data) {
+			if (!isNaN(data.seconds)) {
+				console.log('Seeked to:', data.seconds, 'seconds');
+			} else {
+				console.log('Error: Unable to get current video time.');
+			}
+		});
+
+		// Handle video completion
+		player.on('ended', function() {
+			clearInterval(progressInterval);
+			console.log('Video played completed');
+		});
+	</script>
+</body>
+</html>
