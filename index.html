@@ -29,12 +29,12 @@
 		// Handle player play and pause events
 		player.on('play', function() {
 			isPlaying = true;
-			console.log('Video started playing');
+			console.log('Video started playing at', new Date().toLocaleTimeString());
 		});
 
 		player.on('pause', function() {
 			isPlaying = false;
-			console.log('Video paused');
+			console.log('Video paused at', new Date().toLocaleTimeString());
 		});
 
 		// Track the progress of the video every 5 seconds
@@ -66,7 +66,15 @@
 		// Handle video completion
 		player.on('ended', function() {
 			clearInterval(progressInterval);
-			console.log('Video played completed');
+			player.getCurrentTime().then(function(seconds) {
+				if (!isNaN(duration)) {
+					console.log('Video played completed at', new Date().toLocaleTimeString());
+					console.log('Completion:', (seconds / duration) * 100, '%');
+					console.log('Elapsed time:', seconds, 'seconds');
+				}
+			}).catch(function(error) {
+				console.log('Error:', error);
+			});
 		});
 	</script>
 </body>
